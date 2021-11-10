@@ -1,0 +1,54 @@
+---
+- name: Deploy
+  hosts: all
+  tasks:
+    - name: Clone scraper repo
+      git:
+        repo: https://github.com/MihaiBlebea/content_aggregator.git
+        dest: /home/pi/content_aggregator
+        clone: yes
+        update: yes
+
+    - name: Create the virtual env
+      shell:
+        cmd: make venv-create
+        chdir: /home/pi/jobs_scraper
+      register: out
+
+    - debug: var=out.stdout_lines
+
+    - name: Install the dependencies in virtualenv
+      shell:
+        cmd: ./virtualenv/bin/pip3 install -r requirements.txt
+        chdir: /home/pi/jobs_scraper
+      register: out
+
+    - debug: var=out.stdout_lines
+
+    - name: Copy env file to remote
+      become: true 
+      copy:
+        src: ~/Projects/Python/jobs/.env
+        dest: /home/pi/jobs_scraper/.env
+        owner: pi
+        group: pi        
+        mode: 0644
+
+    - name: Create the rss cronjob
+      cron:
+        name: "content_aggregator: fetch rss links"
+        minute: "0"
+        hour: "8"
+        job: "cd ${HOME}/content_aggregator && ./execute.sh rss >> ${HOME}/content_aggregator.log 2>&1"
+
+    - name: Create the spider cronjob
+      cron:
+        name: "content_aggregator: fetch content"
+        minute: "0"
+        hour: "9"
+        job: "cd ${HOME}/content_aggregator && ./virtualenv/bin/scrapy crawl content -O output.json >> ${HOME}/content_aggregator.log 2>&1"
+
+    # - name: Start the API server
+    #   shell:
+    #     cmd: ./virtualenv/bin/python3 ./src/api.py &
+    #     chdir: /home/pi/jobs_scraper
