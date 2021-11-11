@@ -1,5 +1,6 @@
 import feedparser
 import json
+import uuid
 
 urls = [
 	"https://www.freecodecamp.org/news/rss/",
@@ -20,6 +21,7 @@ def parse_rss(url: str) -> list:
 	results = []
 	for entry in feed["entries"]:
 		results.append({
+			"id": str(uuid.uuid4()),
 			"title": entry["title"],
 			"url": entry["link"],
 			"summary": entry["summary"],

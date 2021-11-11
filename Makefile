@@ -35,3 +35,6 @@ scrape:
 
 shell:
 	./virtualenv/bin/scrapy shell
+
+api:
+	./virtualenv/bin/python3 ./src/api.py

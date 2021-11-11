@@ -11,7 +11,7 @@ class ContentSpider(Spider):
 
 	name = "content"
 
-	start_urls = []
+	data = []
 
 	json_file = "data.json"
 
@@ -19,16 +19,37 @@ class ContentSpider(Spider):
 
 	def __init__(self):
 		with open(self.json_file) as file:
-			data = json.loads(file.read())
-			for d in data:
-				self.start_urls.append(d["url"])
+			self.data = json.loads(file.read())
 
 	def start_requests(self):
-		for url in self.start_urls:
-			yield self.__req(url)
+		for d in self.data:
+			if "url" not in d:
+				continue
+
+			if "id" not in d:
+				continue
+
+			yield  SplashRequest(
+				url=d["url"], 
+				callback=self.parse_content,
+				args={
+					"wait": 2
+				},
+				splash_url="https://splash.cap-rover.purpletreetech.com",
+				splash_headers={
+					"Authorization": basic_auth_header(
+						self.config["SPLASH_USERNAME"], 
+						self.config["SPLASH_PASSWORD"],
+					)
+				},
+				meta={
+					"article_id": d["id"]
+				}
+			)
 
 	def parse_content(self, response):
 		yield {
+			"id": response.meta.get("article_id"),
 			"url": response.url,
 			"title": response.css("title::text").get(),
 			"description": self.__parse_meta_description(response),
@@ -37,22 +58,6 @@ class ContentSpider(Spider):
 			"links": self.__get_page_links(response),
 			"tags": self.__parse_meta_tags(response)
 		}
-
-	def __req(self, url: str):
-		return SplashRequest(
-			url=url, 
-			callback=self.parse_content,
-			args={
-				"wait": 2
-			},
-			splash_url="https://splash.cap-rover.purpletreetech.com",
-			splash_headers={
-				"Authorization": basic_auth_header(
-					self.config["SPLASH_USERNAME"], 
-					self.config["SPLASH_PASSWORD"],
-				)
-			}
-		)
 
 	def __get_page_links(self, response):
 		base_url = self.__extract_host_from_url(response.url)
