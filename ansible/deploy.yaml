@@ -47,6 +47,15 @@
         minute: "0"
         hour: "9"
         job: "cd ${HOME}/content_aggregator && ./virtualenv/bin/scrapy crawl content -O output.json >> ${HOME}/content_aggregator.log 2>&1"
+    
+    - name: Create a data container
+      docker_container:
+        name: splash
+        image: scrapinghub/splash
+        state: present
+        detach: true
+        ports:
+            - "8085:8085"
 
     # - name: Start the API server
     #   shell:
