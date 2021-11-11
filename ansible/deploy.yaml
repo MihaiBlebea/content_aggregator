@@ -12,7 +12,7 @@
     - name: Create the virtual env
       shell:
         cmd: make venv-create
-        chdir: /home/pi/jobs_scraper
+        chdir: /home/pi/content_aggregator
       register: out
 
     - debug: var=out.stdout_lines
@@ -20,7 +20,7 @@
     - name: Install the dependencies in virtualenv
       shell:
         cmd: ./virtualenv/bin/pip3 install -r requirements.txt
-        chdir: /home/pi/jobs_scraper
+        chdir: /home/pi/content_aggregator
       register: out
 
     - debug: var=out.stdout_lines
@@ -28,8 +28,8 @@
     - name: Copy env file to remote
       become: true 
       copy:
-        src: ~/Projects/Python/jobs/.env
-        dest: /home/pi/jobs_scraper/.env
+        src: ~/Projects/Python/content_aggregator/.env
+        dest: /home/pi/content_aggregator/.env
         owner: pi
         group: pi        
         mode: 0644
@@ -48,16 +48,15 @@
         hour: "9"
         job: "cd ${HOME}/content_aggregator && ./virtualenv/bin/scrapy crawl content -O output.json >> ${HOME}/content_aggregator.log 2>&1"
     
-    - name: Create a data container
-      docker_container:
-        name: splash
-        image: scrapinghub/splash
-        state: present
-        detach: true
-        ports:
-            - "8085:8085"
+    # - name: Create the spash container
+    #   docker_container:
+    #     name: splash
+    #     image: scrapinghub/splash
+    #     state: present
+    #     detach: true
+    #     ports:
+    #         - "8085:8085"
 
-    # - name: Start the API server
+    # - name: Create the spash container
     #   shell:
-    #     cmd: ./virtualenv/bin/python3 ./src/api.py &
-    #     chdir: /home/pi/jobs_scraper
+    #     cmd: docker run -d -p 8050:8050 --name spash --rm scrapinghub/splash

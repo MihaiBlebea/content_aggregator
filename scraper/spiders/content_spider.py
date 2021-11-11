@@ -1,9 +1,10 @@
-from scrapy import Request, Spider
+from scrapy import Spider
 from scrapy_splash import SplashRequest
-import re
+from w3lib.http import basic_auth_header
 import json
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+from dotenv import dotenv_values
 
 
 class ContentSpider(Spider):
@@ -14,10 +15,12 @@ class ContentSpider(Spider):
 
 	json_file = "data.json"
 
+	config = dotenv_values(".env")
+
 	def __init__(self):
 		with open(self.json_file) as file:
 			data = json.loads(file.read())
-			for d in data[:1]:
+			for d in data:
 				self.start_urls.append(d["url"])
 
 	def start_requests(self):
@@ -41,6 +44,13 @@ class ContentSpider(Spider):
 			callback=self.parse_content,
 			args={
 				"wait": 2
+			},
+			splash_url="https://splash.cap-rover.purpletreetech.com",
+			splash_headers={
+				"Authorization": basic_auth_header(
+					self.config["SPLASH_USERNAME"], 
+					self.config["SPLASH_PASSWORD"],
+				)
 			}
 		)
 

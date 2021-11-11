@@ -25,6 +25,7 @@ pyasn1-modules==0.2.8
 pycparser==2.21
 PyDispatcher==2.0.5
 pyOpenSSL==21.0.0
+python-dotenv==0.19.2
 queuelib==1.6.2
 Scrapy==2.5.1
 scrapy-splash==0.8.0
