@@ -38,6 +38,7 @@ service-identity==21.1.0
 sgmllib3k==1.0.0
 six==1.16.0
 soupsieve==2.3
+tinydb==4.5.2
 Twisted==21.7.0
 typing-extensions==3.10.0.2
 w3lib==1.22.0

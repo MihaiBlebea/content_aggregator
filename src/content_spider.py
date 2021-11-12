@@ -1,11 +1,11 @@
 from scrapy import Spider
 from scrapy_splash import SplashRequest
 from w3lib.http import basic_auth_header
-import json
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from dotenv import dotenv_values
 
+from store import get_all_rss
 
 class ContentSpider(Spider):
 
@@ -13,13 +13,14 @@ class ContentSpider(Spider):
 
 	data = []
 
-	json_file = "data.json"
+	# json_file = "data.json"
 
 	config = dotenv_values(".env")
 
 	def __init__(self):
-		with open(self.json_file) as file:
-			self.data = json.loads(file.read())
+		self.data = get_all_rss()
+		# with open(self.json_file) as file:
+		# 	self.data = json.loads(file.read())
 
 	def start_requests(self):
 		for d in self.data:
@@ -79,7 +80,7 @@ class ContentSpider(Spider):
 		results = []
 		for tag in tags:
 			result = {}
-			result[tag.name] = tag.text.strip()
+			result[tag.name] = "".join(tag.text.strip().split())
 			results.append(result)
 			
 		return results

@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 import os
-import json
+
+from store import get_all_rss, get_article_by_id
 
 app = Flask(__name__)
 
@@ -47,35 +48,22 @@ def index():
 		if page < 0:
 			page = 0
 
-	with open("data.json") as file:
-		data = json.loads(file.read())
+	data = get_all_rss()
 
-		response = paginate(data, per_page, page)
-		return jsonify(response)
+	for article in data:
+		article["details"] = f"{request.host_url}article/{article['id']}"
+
+	response = paginate(data, per_page, page)
+	return jsonify(response)
 
 
 @app.route("/article/<article_id>")
 def league(article_id: str):
-	pass
-	# result = []
-	# if league in leagues and season in seasons:
-	# 	with open(f"./data/league_{leagues[league]}_{season}.json", "r") as outfile:
-	# 		# json.dump(data, outfile)
-	# 		data = json.loads(outfile.read())
+	data = get_article_by_id(article_id)
+	if data is not None:
+		return jsonify(data)
 
-			# result = data
-		# for d in data:
-		# 	result.append({
-		# 		"id": r[0],
-		# 		"title": r[1],
-		# 		"url": r[2],
-		# 		"unique_id": r[3],
-		# 		"salary_low": r[4],
-		# 		"salary_high": r[5],
-		# 		"created": r[6]
-		# 	})
-
-	return jsonify(result)
+	return abort(404)
 
 
 if __name__ == "__main__":
