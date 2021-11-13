@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, abort
 import os
 
-from store import get_all_rss, get_article_by_id
+from store import get_all_rss, get_article_by_id, get_rss_links, store_rss_link, remove_rss_link
 
 app = Flask(__name__)
 
@@ -36,8 +36,8 @@ def paginate(data, per_page, page) -> dict:
 	return response
 
 
-@app.route("/articles")
-def index():
+@app.route("/articles", methods=["GET"])
+def articles():
 	per_page = 20
 	page = 0
 	if request.args.get("per_page") is not None:
@@ -57,13 +57,32 @@ def index():
 	return jsonify(response)
 
 
-@app.route("/article/<article_id>")
-def league(article_id: str):
+@app.route("/article/<article_id>", methods=["GET"])
+def article(article_id: str):
 	data = get_article_by_id(article_id)
 	if data is not None:
 		return jsonify(data)
 
 	return abort(404)
+
+
+@app.route("/rss", methods=["GET", "POST", "DELETE"])
+def rss():
+	if request.method == "GET":
+		data = get_rss_links()
+		return jsonify(data)
+
+	if request.method == "DELETE":
+		body = request.get_json(force=True)
+		if "link" in body:
+			remove_rss_link(body["link"])
+		return jsonify({"status": "OK"})
+	
+	if request.method == "POST":
+		body = request.get_json(force=True)
+		if "link" in body:
+			store_rss_link(body["link"])
+		return jsonify({"status": "OK"})
 
 
 if __name__ == "__main__":

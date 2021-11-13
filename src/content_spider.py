@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from dotenv import dotenv_values
 
-from store import get_all_rss
+from store import get_all_rss, exist_record_by_url
 
 class ContentSpider(Spider):
 
@@ -13,14 +13,10 @@ class ContentSpider(Spider):
 
 	data = []
 
-	# json_file = "data.json"
-
 	config = dotenv_values(".env")
 
 	def __init__(self):
 		self.data = get_all_rss()
-		# with open(self.json_file) as file:
-		# 	self.data = json.loads(file.read())
 
 	def start_requests(self):
 		for d in self.data:
@@ -28,6 +24,9 @@ class ContentSpider(Spider):
 				continue
 
 			if "id" not in d:
+				continue
+			
+			if exist_record_by_url(d["url"]):
 				continue
 
 			yield  SplashRequest(

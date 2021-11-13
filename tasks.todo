@@ -1,2 +1,6 @@
 ### Tasks
-	☐ Example task
+	✔ Add rss start links into the tinydb @done (13/11/2021, 12:33:25)
+	✔ Add endpoint in API to add new rss feed @done (13/11/2021, 14:09:10)
+	✔ Add endpoint to return all the rss feeds curently stored @done (13/11/2021, 14:09:13)
+	☐ Add support for telegram notifications once every job is completed
+	☐ Add cli command to return an article

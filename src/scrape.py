@@ -31,8 +31,6 @@ def main():
 	process.start()
 
 	store_article_records(results)
-	# with open("output.json", "w") as outfile:
-	# 	json.dump(results, outfile)
 
 if __name__ == "__main__":
 	main()

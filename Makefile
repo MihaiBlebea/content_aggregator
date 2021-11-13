@@ -30,6 +30,17 @@ splash:
 splash-stop:
 	docker stop splash && docker rm splash
 
+docker-api-build:
+	docker build -t api:v1.0 .
+
+docker-api-run:
+	docker run -v ${PWD}/store:/app/store -d -p 5000:5000 --name api api:v1.0
+
+docker-api: docker-api-build docker-api-run
+
+docker-api-stop:
+	docker stop api && docker rm api
+
 scrape:
 	./virtualenv/bin/scrapy crawl content -O output.json
 

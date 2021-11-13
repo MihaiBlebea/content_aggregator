@@ -48,14 +48,24 @@
         hour: "9"
         job: "cd ${HOME}/content_aggregator && ./virtualenv/bin/scrapy crawl content -O output.json >> ${HOME}/content_aggregator.log 2>&1"
     
-    # - name: Create the spash container
-    #   docker_container:
-    #     name: splash
-    #     image: scrapinghub/splash
-    #     state: present
-    #     detach: true
-    #     ports:
-    #         - "8085:8085"
+    - name: build container image
+      docker_image:
+        name: api:v1.0
+        build:
+            path: /home/pi/content_aggregator
+            source: build
+        state: present
+
+    - name: Create the spash container
+      docker_container:
+        name: api
+        image: api:v1.0
+        volumes:
+            - ${PWD}/store:/app/store
+        state: present
+        detach: true
+        ports:
+            - "8085:8085"
 
     # - name: Create the spash container
     #   shell:

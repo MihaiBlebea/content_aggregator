@@ -2,4 +2,4 @@ virtualenv
 .env
 data.json
 output.json
-store.json
+/store

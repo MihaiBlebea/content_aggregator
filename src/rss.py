@@ -1,19 +1,18 @@
 import feedparser
-import json
 import uuid
 
-from store import store_rss_records
+from store import get_rss_links, store_rss_records
 
-urls = [
-	"https://www.freecodecamp.org/news/rss/",
-	"https://cdn.hackernoon.com/tagged/golang/feed",
-	"https://waylonwalker.com/rss.xml"
-]
+# "https://www.freecodecamp.org/news/rss/"
+# "https://cdn.hackernoon.com/tagged/golang/feed"
+# "https://waylonwalker.com/rss.xml"
 
 def main():
+	urls = get_rss_links()
+
 	results = []
 	for u in urls:
-		results += parse_rss(u)
+		results += parse_rss(u["link"])
 
 	store_rss_records(results)
 
