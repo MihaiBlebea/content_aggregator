@@ -60,10 +60,10 @@
         name: api
         image: api:v1.0
         volumes:
-            - ${PWD}/store:/app/store
+            - /home/pi/content_aggregator/store:/app/store
         state: present
         detach: true
-        ports:
+        published_ports:
             - "8085:8085"
 
     # - name: Create the spash container
