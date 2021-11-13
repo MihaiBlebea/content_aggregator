@@ -6,7 +6,7 @@ cffi==1.15.0
 click==8.0.3
 constantly==15.1.0
 # cryptography==35.0.0
-cryptography==2.8
+cryptography==3.3
 cssselect==1.1.0
 feedparser==6.0.8
 Flask==2.0.2
