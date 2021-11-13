@@ -53,7 +53,6 @@
         name: api:v1.0
         build:
             path: /home/pi/content_aggregator
-            source: build
         state: present
 
     - name: Create the spash container
